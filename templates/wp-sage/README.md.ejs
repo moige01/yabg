@@ -1,0 +1,18 @@
+# <%- name %>
+
+To boostrap container docker:
+ 1. Copy and paste `.env.example` to `.env`
+ 2. Fill the `.env` file
+ 3. Run following command: `# ./scripts/<%- name %>.sh build`
+
+## Development
+
+Run: `# ./scripts/<%- name %>.sh start` to start the container
+`# ./scripts/prepare_theme.sh ${THEME_NAME}` to create new Roots theme, example: `./scripts/prepare_theme.sh <%- name %>`
+`# ./scripts/yarn.sh {THEME_NAME} ${ANY_YARN_COMMAND}` to use Yarn's commands on the theme, example: `./yarn.sh nourished start`
+
+Wordpress is runing on `<%- name %>.local` virtual host and phpMyAdmin is runing on port `8081`. All changes maded are located in `wordpress/` folder.
+
+### NOTE
+
+Due Wordpress is runing on an virtual host via Nginx proxy, you must need to add `127.0.0.1 <%- name %>.local` to your `/etc/hosts` file.
