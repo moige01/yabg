@@ -1,16 +1,16 @@
 {
   "name": "yabg",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Yes... Another Boilerplate Generator",
   "keywords": [
     "generator",
     "projects",
     "web"
   ],
-  "homepage": "https://github.com/sugudor/yabg",
+  "homepage": "https://github.com/sugud0r/yabg",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sugudor/yabg.git"
+    "url": "https://github.com/sugud0r/yabg.git"
   },
   "license": "MIT",
   "author": "Moisés González <mgondev@gmail.com>",
