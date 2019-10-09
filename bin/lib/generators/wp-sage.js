@@ -19,7 +19,7 @@ function createWPApplication(name, dir) {
   helpers.copyTemplate('wp-sage/scripts/yarn.sh', pathJoin(dir, 'scripts/yarn.sh'));
   helpers.copyTemplate('wp-sage/Dockerfile', pathJoin(dir, 'Dockerfile'));
   helpers.copyTemplate('wp-sage/.env.example', pathJoin(dir, '.env.example'));
-  helpers.copyTemplate('wp-sage/.gitignore', pathJoin(dir, '.gitignore'));
+  helpers.copyTemplate('wp-sage/gitignore', pathJoin(dir, '.gitignore'));
 }
 
 module.exports = createWPApplication;
