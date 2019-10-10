@@ -7,6 +7,7 @@ const noCase = require('no-case')
 
 const MODE_0666 = parseInt('0666', 8);
 const MODE_0755 = parseInt('0755', 8);
+const MODE_0744 = parseInt('0744', 8);
 const TEMPLATE_DIR = pathJoin(__dirname, '..', 'templates');
 
 function write(file, str, mode) {
@@ -51,4 +52,7 @@ module.exports = {
 	kebabCase,
 	loadTemplate,
 	copyTemplate,
+	MODE_0744,
+	MODE_0755,
+	MODE_0666,
 }

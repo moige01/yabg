@@ -11,12 +11,13 @@ async function create(projectName, options) {
   const name = inCurrent ? path.relative('../', dir) : projectName;
   const targetDir = path.resolve(dir, projectName || '.');
 
+	clear();
+
   if (fs.existsSync(targetDir)) {
     if (options.force) {
       await fs.remove(targetDir);
       await fs.ensureDir(targetDir);
     } else {
-      clear();
       if (inCurrent) {
         const { ok } = await inquirer.prompt([
           {

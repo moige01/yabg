@@ -10,4 +10,4 @@ fi
 # $1 = Theme name
 # $2 = Yarn's command name
 
-docker exec wp bash -c "source ~/.bashrc && cd wp-content/themes/$1 && yarn $2"
+docker exec <%- name %>_wp bash -c "source ~/.bashrc && cd wp-content/themes/$1 && yarn $2"

@@ -9,7 +9,7 @@ fi
 
 # $1 = Theme name
 
-docker exec wp bash -c "source ~/.bashrc \
+docker exec <%- name %>_wp bash -c "source ~/.bashrc \
   && cd wp-content/themes/ \
   && composer create-project roots/sage -n $1 \
   && cd $1 \
