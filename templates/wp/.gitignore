@@ -1,0 +1,34 @@
+.env
+vendor/
+
+### WordPress ###
+
+wordpress/wp-config.php
+wp-config.php
+# ignore everything in the root except the "wp-content" directory.
+#!wp-content/
+
+# ignore everything in the "wp-content" directory, except:
+# "mu-plugins", "plugins", "themes" directory
+wordpress/wp-content/*
+wordpress/wp-content/uploads/*
+!wordpress/wp-content/themes/
+!wordpress/wp-includes/js/dist/vendor
+# ignore these plugins
+wordpress/wp-content/plugins/hello.php
+wordpress/wp-content/languages/**/*
+
+# ignore node dependency directories
+node_modules/
+
+# ignore log files and databases
+.DS_Store
+*.log
+*.sql
+*.sqlite
+.htaccess
+yarn.lock
+composer.lock
+
+# VSCode
+.vscode

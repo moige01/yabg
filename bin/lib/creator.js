@@ -8,7 +8,6 @@ const chalk = require('chalk');
 async function create(projectName, options) {
   const dir = process.cwd();
   const inCurrent = projectName === '.';
-  const name = inCurrent ? path.relative('../', dir) : projectName;
   const targetDir = path.resolve(dir, projectName || '.');
 
 	clear();
@@ -72,15 +71,7 @@ async function create(projectName, options) {
   
   switch(projectType) {
 	case 'wp':
-	  const { withSage } = await inquirer.prompt([
-		{
-		  name: 'withSage',
-		  type: 'confirm',
-		  message: `Create Wordpress project with Roots Sage?`,
-		},
-	  ]);
-
-	  const finalCreator = withSage ? 'wp-sage' : 'wp';
+	  const finalCreator = 'wp';
 	
 	  require(`./generators/${finalCreator}`)(projectName, targetDir);
 	  break;

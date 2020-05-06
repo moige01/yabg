@@ -1,9 +1,9 @@
 const { writeFileSync, readFileSync } = require('fs');
 const { join: pathJoin, sep: pathSep } = require('path');
-const { sync: mkdirpSync } = require('mkdirp')
+const { sync: mkdirpSync } = require('mkdirp');
 const { render: ejsRender } = require('ejs');
 const { inspect: utilInspect } = require('util');
-const noCase = require('no-case')
+const noCase = require('no-case');
 
 const MODE_0666 = parseInt('0666', 8);
 const MODE_0755 = parseInt('0755', 8);

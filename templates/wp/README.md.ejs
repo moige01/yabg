@@ -1,16 +1,51 @@
 # <%- name %>
 
-To boostrap container docker:
- 1. Copy and paste `.env.example` to `.env`
- 2. Fill the `.env` file
- 3. Run following command: `# ./scripts/<%- name %>.sh build`
+Container based WordPress project. Design to avoid copy-paste and "in my local work". 
+
+## Configuration
+
+To bootstrap the project follow:
+
+1. Copy and paste `.env.example` to `.env` (NO rename or delete. This file is tracked in git)
+
+2. Fill the `.env` file
+
+3. Run: `# ./<%- name %>.sh addrecord`
 
 ## Development
 
-Run: `# ./scripts/<%- name %>.sh start` to start the container
+Following services are running:
+* [WordPress](https://wordpress.org/)
+* [MySQL](https://www.mysql.com/)
+* [NGINX](https://github.com/nginx-proxy/nginx-proxy)
+* [MailHog](https://github.com/mailhog/MailHog)
+* [Adminer](https://www.adminer.org/)
 
-Wordpress is runing on `<%- name %>.local` virtual host and phpMyAdmin is runing on port `8081`. All changes maded are located in `wordpress/` folder.
+Following virtual hosts are used:
+* `<%- name %>.local` for WordPress service
+* `db.<%- name %>.local` for Adminer service
+* `mail.<%- name %>.local` for MailHog service (Web UI)
 
-### NOTE
+Following ports are open:
+* `80` for NGINX service
 
-Due Wordpress is runing on an virtual host via Nginx proxy, you must need to add `127.0.0.1 <%- name %>.local` to your `/etc/hosts` file.
+Due that this configuration use Virtual Host via NGINX reverse proxy, all of the above mentioned virtual hosts **MUST** be added to `/etc/hosts` file under Linux environments. All virtual host **MUST** point to `localhost` or `127.0.0.1` Something like this line:
+
+`127.0.0.1 <%- name %>.local mail.<%- name %>.local db.<%- name %>.local`
+
+For this, you can use `# ./<%- name %>.sh addrecord` script. Note this **MUST** be run with sudo.
+
+You can run the project with `# ./<%- name %>.sh start` or with the standard command `docker-compose up -d`.
+
+### NOTES
+
+* First start can be take a while to be done. This is due to MySQL service initialization. You can check te process with `# ./<%- name %>.sh debug` command.
+* Due to before said, WordPress won't run until MySQL finish their initialization.
+* MySQL root password is random. It only can be taken in initialization process if you see the logs. The root password will be echoed like this: `GENERATED ROOT PASSWORD: xxxxx`.
+* Please, don't open random ports unless you have a good reason to. Virtual Hosts are less painful to configure.
+* To WordPress Multisite see [WordPress Docker](https://hub.docker.com/_/wordpress/) `WORDPRESS_CONFIG_EXTRA` environment variable and edit `docker-compose.yaml` if apply.
+* All files under the `wordpress` folder are owned by `http` user (uid: 33 and guid: 33). If this change, permisology problems will appear. To avoid change tis, you can use [ACL](https://wiki.archlinux.org/index.php/Access_Control_Lists) to change folder permissions: `# setfacl -R -m "u:user:rwx" wordpress/` where `user` is your username. This command must be run with sudo.
+
+## IMPORTANT
+
+This configuration is only available for developing and testing environments. Please, **DON'T** use in production. You get advised.
