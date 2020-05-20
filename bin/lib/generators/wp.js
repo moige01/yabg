@@ -15,7 +15,7 @@ function createWPApplication(name, dir) {
   helpers.write(pathJoin(dir, `${name}.sh`), control.render(), helpers.MODE_0744);
 
   helpers.copyTemplate('wp/.env.example', pathJoin(dir, '.env.example'));
-  helpers.copyTemplate('wp/.gitignore', pathJoin(dir, '.gitignore'));
+  helpers.copyTemplate('wp/gitignore', pathJoin(dir, '.gitignore'));
 }
 
 module.exports = createWPApplication;
