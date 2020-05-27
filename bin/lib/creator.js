@@ -1,9 +1,11 @@
-const helpers = require('../helpers');
 const path = require('path');
 const fs = require('fs-extra');
+const { join: pathJoin } = require('path');
+const { Spinner } = require('cli-spinner');
 const inquirer = require('inquirer');
 const clear = require('clear');
 const chalk = require('chalk');
+const helpers = require('../helpers');
 
 async function create(projectName, options) {
   const dir = process.cwd();
@@ -58,12 +60,12 @@ async function create(projectName, options) {
 
   const { projectType } = await inquirer.prompt([
     {
-	  name: 'projectType',
-	  type: 'list',
-	  message: `Please, pick the project type:`,
-	  choices: [
-	    { name: 'Wordpress', value: 'wp' },
-	  ],
+  	  name: 'projectType',
+  	  type: 'list',
+  	  message: `Please, pick the project type:`,
+  	  choices: [
+  	    { name: 'WordPress', value: 'wp' },
+  	  ],
     },
   ]);
 
@@ -71,10 +73,48 @@ async function create(projectName, options) {
   
   switch(projectType) {
 	case 'wp':
-	  const finalCreator = 'wp';
-	
-	  require(`./generators/${finalCreator}`)(projectName, targetDir);
-	  break;
+    require(`./generators/wp`)(projectName, targetDir);
+
+    const { ok } = await inquirer.prompt([
+      {
+        name: 'ok',
+        type: 'confirm',
+        message: `Add a theme for develop?`,
+      },
+    ]);
+
+    if (!ok) {
+      break;
+    }
+
+    const { themeType } = await inquirer.prompt([
+      {
+        name: 'themeType',
+        type: 'list',
+        message: `Please, chose a theme type:`,
+        choices: [
+          { name: 'Underscores', value: 'u' },
+        ],
+      },
+    ]);
+
+    const spinner = new Spinner({ text: 'Downloading and installing theme. Please, wait... %s' });
+    switch (themeType) {
+      case 'u':
+        spinner.start();
+        try {
+          await helpers.getUnderscoresTheme(projectName, pathJoin(targetDir, 'wp-content', 'themes'));
+        } catch (error) {
+          console.log('\n', chalk.yellow.inverse('!WARNING!'), 'Theme creation wast not successful due to:', chalk.red.inverse(error.message));
+        }
+        spinner.stop();
+        break;
+    
+      default:
+        break;
+    }
+
+    break
 	default:
 	  return;
   }

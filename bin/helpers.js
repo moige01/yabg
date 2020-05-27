@@ -46,6 +46,69 @@ function kebabCase(str) {
 	return noCase(str, null, '-');
 }
 
+function getUnderscoresTheme(themeName, outputPath) {
+  return new Promise(async function (resolve, reject) {
+    const http = require("https");
+    const querystring = require('querystring');
+    const tmp = require('tmp');
+    const unzip = require('extract-zip');
+    const tmpobj = tmp.fileSync({ mode: 0o644, prefix: 'theme', postfix: '.zip' });
+    const { createWriteStream } = require('fs');
+  
+    const tempStream = createWriteStream(tmpobj.name);
+  
+    const query = querystring.stringify({
+      underscoresme_generate: 1,
+      underscoresme_name: themeName,
+      underscoresme_slug: '',
+      underscoresme_author: '',
+      underscoresme_author_uri: '',
+      underscoresme_description: '',
+      underscoresme_generate_submit: 'Generate',
+    });
+  
+    var options = {
+      host: 'underscores.me',
+      path: '/',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Length': query.length
+      }
+    };
+  
+    const req = http.request(options, function (res) {
+      res.pipe(tempStream);
+  
+      res.on('end', async function () {
+        tempStream.close();
+  
+        try {
+          await unzip(tmpobj.name, { dir: outputPath });
+          resolve()
+        } catch (error) {
+          tmpobj.removeCallback();
+          reject(error);
+        }
+      });
+  
+      res.on('error', function (err) {
+        tmpobj.removeCallback();
+        reject(err);
+      })
+    });
+  
+  
+    req.on('error', function (err) {
+      tmpobj.removeCallback();
+      reject(err);
+    });
+  
+    req.write(query);
+    req.end();
+  });
+}
+
 module.exports = {
 	write,
 	mkdir,
@@ -54,5 +117,6 @@ module.exports = {
 	copyTemplate,
 	MODE_0744,
 	MODE_0755,
-	MODE_0666,
+  MODE_0666,
+  getUnderscoresTheme,
 }
