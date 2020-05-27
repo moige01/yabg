@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -eu -o pipefail
 
 _help() {
   echo
@@ -24,21 +24,20 @@ _new_record() {
 
   local record="127.0.0.1 ${root} ${mail} ${db}"
 
-  echo $record | sudo tee -a /etc/hosts
+  echo "${record}" | sudo tee -a /etc/hosts
 }
 
-
-if [[ "$EUID" -ne 0 ]]; then
+if [[ "${EUID}" -ne 0 ]]; then
   echo "This script MUST be run by root (sudo)"
   exit
 fi
 
-if [[ $# -lt 1  ]]; then
+if [[ ${#} -lt 1  ]]; then
   _help
   exit
 fi
 
-case $1 in
+case ${1} in
   "restart")
     docker-compose restart
     ;;

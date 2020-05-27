@@ -1,22 +1,8 @@
+# config
 .env
+
+# composer
 vendor/
-
-### WordPress ###
-
-wordpress/wp-config.php
-wp-config.php
-# ignore everything in the root except the "wp-content" directory.
-#!wp-content/
-
-# ignore everything in the "wp-content" directory, except:
-# "mu-plugins", "plugins", "themes" directory
-wordpress/wp-content/*
-wordpress/wp-content/uploads/*
-!wordpress/wp-content/themes/
-!wordpress/wp-includes/js/dist/vendor
-# ignore these plugins
-wordpress/wp-content/plugins/hello.php
-wordpress/wp-content/languages/**/*
 
 # ignore node dependency directories
 node_modules/
@@ -27,8 +13,6 @@ node_modules/
 *.sql
 *.sqlite
 .htaccess
-yarn.lock
-composer.lock
 
 # VSCode
 .vscode

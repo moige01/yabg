@@ -44,7 +44,7 @@ You can run the project with `# ./<%- name %>.sh start` or with the standard com
 * MySQL root password is random. It only can be taken in initialization process if you see the logs. The root password will be echoed like this: `GENERATED ROOT PASSWORD: xxxxx`.
 * Please, don't open random ports unless you have a good reason to. Virtual Hosts are less painful to configure.
 * To WordPress Multisite see [WordPress Docker](https://hub.docker.com/_/wordpress/) `WORDPRESS_CONFIG_EXTRA` environment variable and edit `docker-compose.yaml` if apply.
-* All files under the `wordpress` folder are owned by `http` user (uid: 33 and guid: 33). If this change, permisology problems will appear. To avoid change tis, you can use [ACL](https://wiki.archlinux.org/index.php/Access_Control_Lists) to change folder permissions: `# setfacl -R -m "u:user:rwx" wordpress/` where `user` is your username. This command must be run with sudo.
+* All files under the `wordpress` folder are owned by `http` user (uid: 33 and guid: 33). If this change, permisology problems will appear. To avoid change tis, you can use [ACL](https://wiki.archlinux.org/index.php/Access_Control_Lists) to change folder permissions: `# setfacl -R -m "u:user:rwx" wp-content/` where `user` is your username. This command must be run with sudo.
 
 ## IMPORTANT
 
