@@ -37,6 +37,19 @@ For this, you can use `# ./<%- name %>.sh addrecord` script. Note this **MUST** 
 
 You can run the project with `# ./<%- name %>.sh start` or with the standard command `docker-compose up -d`.
 
+## Notes for those that don't (or can't) use Docker
+
+You can symlink the `wp-content/` folder to a existing WordPress installation anywhere in your system. 
+You can archive this with `# ./<%- name %>.sh symlinkwpcontent <root dir of existing WordPress folder>`. 
+
+If you don't have any WordPress installed, you can use `# ./<%- name %>.sh installwpcore <destination folder>`. This will install the last WordPress version without the `wp-content` folder (ideally for the previous step).
+
+Next, you can use the bulit-in PHP webserver using `# ./<%- name %>.sh server`. This will launch a webserver running the project in `localhost:8080`.
+
+Please, take in mind that using this way the Database service (MySQL or MariaDB) **runs by your own**.
+
+For this way, you will need [PHP](https://www.php.net/) and [WP-CLI](https://wp-cli.org/) installed in your system and register in your `$PATH`.
+
 ### NOTES
 
 * First start can be take a while to be done. This is due to MySQL service initialization. You can check te process with `# ./<%- name %>.sh debug` command.
@@ -44,8 +57,8 @@ You can run the project with `# ./<%- name %>.sh start` or with the standard com
 * MySQL root password is random. It only can be taken in initialization process if you see the logs. The root password will be echoed like this: `GENERATED ROOT PASSWORD: xxxxx`.
 * Please, don't open random ports unless you have a good reason to. Virtual Hosts are less painful to configure.
 * To WordPress Multisite see [WordPress Docker](https://hub.docker.com/_/wordpress/) `WORDPRESS_CONFIG_EXTRA` environment variable and edit `docker-compose.yaml` if apply.
-* All files under the `wordpress` folder are owned by `http` user (uid: 33 and guid: 33). If this change, permisology problems will appear. To avoid change tis, you can use [ACL](https://wiki.archlinux.org/index.php/Access_Control_Lists) to change folder permissions: `# setfacl -R -m "u:user:rwx" wp-content/` where `user` is your username. This command must be run with sudo.
+* All files under the `wp-content` folder are (and *must* be) owned by `http` user (uid: 33 and guid: 33). If this change, permisology problems will appear. To avoid change tis, you can use [ACL](https://wiki.archlinux.org/index.php/Access_Control_Lists) to change folder permissions: `# setfacl -R -m "u:user:rwx" wp-content/` where `user` is your username. This command must be run with sudo.
 
-## IMPORTANT
+## DISCLAIMER
 
 This configuration is only available for developing and testing environments. Please, **DON'T** use in production. You get advised.

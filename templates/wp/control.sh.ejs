@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
-set -eu -o pipefail
+set -eo pipefail
+
+if [[ ${DEBUG:-0} -ne 0 ]]; then
+  set -x
+fi
 
 _help() {
   echo
@@ -13,8 +17,75 @@ _help() {
   echo -e "\trestart: restart containers"
   echo -e "\taddrecord: add records to /etc/hosts"
   echo -e "\tdebug: to see services logs"
+  echo -e "\tinstallwpcore <destination path>: install WordPress Core without wp-content"
+  echo -e "\tsymlinkwpcontente <your wordpress root path>: Symlink wp-content project folder to a WordPress enviroment"
+  echo -e "\tserver: Run local test server with WP CLI"
   echo -e "\thelp: print this screen"
   echo
+}
+
+_verify_php_exists() {
+  command -v php >/dev/null 2>&1 || { 
+    echo >&2 'PHP binary is either not in installed or in your $PATH. Aborting.'
+    exit 1
+  }
+}
+
+_verify_if_wp_cli_exists() {
+  command -v wp >/dev/null 2>&1 || { 
+    echo >&2 'WP-CLI binary is either not in installed or in your $PATH. Aborting.'
+    echo >&2 'Plase, visit: https://wp-cli.org/ for more information.'
+    exit 1
+  }
+}
+
+_wp_cli_server() {
+  _verify_if_php_cli_exists
+  _verify_if_wp_cli_exists
+
+  wp server
+}
+
+_symlink_wp_content() {
+  [[ -z "${1}" ]] && { 
+    echo >&2 "Please, provide a valid path."
+    echo
+    echo "USE: symlinkwpcontent <your wordpress root path>"
+    echo
+    echo "EXAMPLE: symlinkwpcontent ~/wordpress"
+    exit 1
+  }
+
+  local wp_content_path=$(realpath ./wp-content)
+  local destination_dir=$(realpath "${1}")
+
+  [[ ! -d "${destination_dir}" ]] && { 
+    echo "Destination dir ${destination_dir} DOES NOT exists."
+    echo "Please, provide a valid WordPress installation dir."
+    exit 1
+  }
+
+  ln -sf "${wp_content_path}" "${destination_dir}/wp-content"
+}
+
+_install_wp_nocontent() {
+  _verify_if_php_exists
+  _verify_if_wp_cli_exists
+
+  [[ -z "${1}" ]] && {
+    echo >&2 "ERROR: Please, provide a valid path."
+    echo
+    echo "USE: installwpcore <destination path>"
+    echo
+    echo "EXAMPLE: installwpcore ~/wordpress"
+    exit 1
+  }
+
+  local full_path=$(realpath "${1}")
+
+  wp core download --skip-content --locale=en_US --path="${full_path}"
+
+  echo "WordPress Core has been installed in ${full_path}. Now, you can Symlink the wp-content/ folder."
 }
 
 _new_record() {
@@ -27,13 +98,13 @@ _new_record() {
   echo "${record}" | sudo tee -a /etc/hosts
 }
 
-if [[ "${EUID}" -ne 0 ]]; then
-  echo "This script MUST be run by root (sudo)"
+if [[ ${#} -lt 1  ]]; then
+  _help
   exit
 fi
 
-if [[ ${#} -lt 1  ]]; then
-  _help
+if [[ "${EUID}" -ne 0 && "${1}" -ne installwpcore && "${1}" -ne symlinkwpcontent ]]; then
+  echo "This script MUST be run by root (sudo)"
   exit
 fi
 
@@ -54,11 +125,19 @@ case ${1} in
     _new_record <%- name %>
     echo "Virtual Hosts records has been added to /etc/hosts"
     ;;
+  "installwpcore")
+    _install_wp_nocontent "${2}"
+    ;;
+  "symlinkwpcontent")
+    _symlink_wp_content "${2}"
+    ;;
+  "server")
+    _wp_cli_server
+    ;;
   "help")
     _help
     ;;
   *)
-    echo "@@ COMMAND ERROR @@"
     _help
     ;;
 esac
