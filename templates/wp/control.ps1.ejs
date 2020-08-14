@@ -1,0 +1,75 @@
+function Print-Help {
+  Write-Host
+  Write-Host "USAGE:"
+  Write-Host "<%- name %>.ps1 COMMANDS"
+  Write-Host
+  Write-Host "COMMANDS:"
+  Write-Host "addrecords: add records to /etc/hosts"
+  Write-Host "installwpcore: install WordPress Core without wp-content"
+  Write-Host "server: run local test server with WP CLI"
+  Write-Host "help: print this screen"
+  Write-Host
+}
+
+function Verify-If-Php-Exists {
+  Get-Command php -ErrorAction SilentlyContinue | Out-Null
+  If (-Not $?) {
+    Write-Host 'PHP was not found'
+    exit 1
+  }
+}
+
+function Verify-If-WP-CLI-Exists {
+  Get-Command wp -ErrorAction SilentlyContinue | Out-Null
+  If (-Not $?) {
+    Write-Host 'WP CLI was not found'
+    exit 1
+  }
+}
+
+function Install-WP-Core {
+  Verify-If-WP-CLI-Exists
+  Verify-If-Php-Exists
+
+  $full_path = (Join-Path -Path $PSScriptRoot -ChildPath 'wp')
+
+  wp core download --skip-content --locale=en_US --path="${full_path}"
+  Write-Host 'WordPress was sucessfully downloaded'
+}
+
+function Add-Records {
+  param(
+    [string[]]$NewHost
+  )
+
+  $root = "$NewHost.local"
+  $mail = "mail.$NewHost.local"
+  $db = "db.$NewHost.local"
+
+  $record = "127.0.0.1 $root $mail $db"
+
+  Add-Content C:\Windows\System32\drivers\etc $record
+  Write-Host "Records was successfully added"
+}
+
+function Start-Server {
+  Verify-If-WP-CLI-Exists
+  Verify-If-Php-Exists
+
+  wp server
+}
+
+$command = $args[0]
+
+if ($command -eq $null) {
+  Print-Help
+  exit 1
+}
+
+switch ($command) {
+ addrecords { Add-Records -NewHost <%- name %> }
+ installwpcore { Install-WP-Core }
+ server { Start-Server }
+ help { Print-Help }
+ default { Print-Help }
+}

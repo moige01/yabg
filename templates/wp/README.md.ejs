@@ -1,8 +1,9 @@
 # <%- name %>
 
-Container based WordPress project. Design to avoid copy-paste and "in my local work". 
+Container based WordPress project. Design to avoid copy-paste and "in my local work".
 
 ## Configuration
+**Early NOTE for Windows users**: There is a PowerShell script that do the same of the Bash Script. Just replace the name of `<%- name %>.sh` to `<%- name %>.ps1`. Remember to adjust your `ExecutionPolicy` (`Set-ExecutionPolicy -ExecutionPolicy RemoteSigned` should be fine) and run as Administrator. The Docker setup runs well with WSL2.
 
 To bootstrap the project follow:
 
@@ -10,7 +11,11 @@ To bootstrap the project follow:
 
 2. Fill the `.env` file
 
-3. Run: `# ./<%- name %>.sh addrecord`
+3. With docker:
+  * `# ./<%- name %>.sh addrecords`
+  * `# docker-compose up -d`
+
+There is an alternative without docker. Check it out below.
 
 ## Development
 
@@ -29,20 +34,21 @@ Following virtual hosts are used:
 Following ports are open:
 * `80` for NGINX service
 
-Due that this configuration use Virtual Host via NGINX reverse proxy, all of the above mentioned virtual hosts **MUST** be added to `/etc/hosts` file under Linux environments. All virtual host **MUST** point to `localhost` or `127.0.0.1` Something like this line:
+Due that this configuration use Virtual Host via NGINX reverse proxy, all of the above mentioned virtual hosts **MUST** be added to `/etc/hosts` file under Linux or `C:\Windows\System32\drivers\etc` for Windows. All virtual host **MUST** point to `localhost` or `127.0.0.1` Something like this line:
 
 `127.0.0.1 <%- name %>.local mail.<%- name %>.local db.<%- name %>.local`
 
-For this, you can use `# ./<%- name %>.sh addrecord` script. Note this **MUST** be run with sudo.
+For this, you can use `# ./<%- name %>.sh addrecords` script. Note this **MUST** be run with sudo.
 
-You can run the project with `# ./<%- name %>.sh start` or with the standard command `docker-compose up -d`.
+You can run the project with with the standard command `docker-compose up -d`.
 
 ## Notes for those that don't (or can't) use Docker
 
-You can symlink the `wp-content/` folder to a existing WordPress installation anywhere in your system. 
-You can archive this with `# ./<%- name %>.sh symlinkwpcontent <root dir of existing WordPress folder>`. 
+If you don't have any WordPress installed, you can use `# ./<%- name %>.sh installwpcore`. This will install the last WordPress version without the `wp-content` folder (ideally for the previous step) into a new folder called `wp` (this is actually ignored in git).
 
-If you don't have any WordPress installed, you can use `# ./<%- name %>.sh installwpcore <destination folder>`. This will install the last WordPress version without the `wp-content` folder (ideally for the previous step).
+Now, yo need to copy and paste (no rename since this file is tracked in git) the file `local-config-sample.php` to `local-config.php`. Then, please, replace salts constants and fill DB constants with your MySQL/MariaDB service host, port, user and password. Yoy may change `$table_prefix` if apply.
+
+Ensure to have enable `mysqli` on your `php.ini` file.
 
 Next, you can use the bulit-in PHP webserver using `# ./<%- name %>.sh server`. This will launch a webserver running the project in `localhost:8080`.
 
@@ -52,7 +58,7 @@ For this way, you will need [PHP](https://www.php.net/) and [WP-CLI](https://wp-
 
 ### NOTES
 
-* First start can be take a while to be done. This is due to MySQL service initialization. You can check te process with `# ./<%- name %>.sh debug` command.
+* First start can be take a while to be done. This is due to MySQL service initialization. You can check te process with `# docker-compose logs --follow` command.
 * Due to before said, WordPress won't run until MySQL finish their initialization.
 * MySQL root password is random. It only can be taken in initialization process if you see the logs. The root password will be echoed like this: `GENERATED ROOT PASSWORD: xxxxx`.
 * Please, don't open random ports unless you have a good reason to. Virtual Hosts are less painful to configure.

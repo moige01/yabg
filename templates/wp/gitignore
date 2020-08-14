@@ -1,18 +1,68 @@
-# config
+# Env config
 .env
 
-# composer
-vendor/
+### WordPress ###
+wp-content/themes/twenty*
+wp-content/uploads/
+# remove below if you are developing a mu-plugins
+wp-content/mu-plugins/
+# remove below if you are developing plugins
+wp-content/plugins/
+wp-content/languages/
+wp-content/upgrade/
+
+# local alternative stuff
+wp/
+local-config.php
 
 # ignore node dependency directories
 node_modules/
+vendor/
 
 # ignore log files and databases
 .DS_Store
 *.log
 *.sql
-*.sqlite
+*.sqlite*
+*.database
+*.db
 .htaccess
 
 # VSCode
 .vscode
+
+# large/disallowed file types to avoid a
+# large repository footprint
+# a CDN should be used for these
+*.hqx
+*.bin
+*.exe
+*.dll
+*.deb
+*.dmg
+*.iso
+*.img
+*.msi
+*.msp
+*.msm
+*.mid
+*.midi
+*.kar
+*.mp3
+*.ogg
+*.m4a
+*.ra
+*.3gpp
+*.3gp
+*.mp4
+*.mpeg
+*.mpg
+*.mov
+*.webm
+*.flv
+*.m4v
+*.mng
+*.asx
+*.asf
+*.wmv
+*.avi

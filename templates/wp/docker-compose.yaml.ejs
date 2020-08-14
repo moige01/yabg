@@ -16,7 +16,8 @@ services:
       VIRTUAL_HOST: "<%- name _%>.local"
     volumes:
       - ./wp-content/themes:/var/www/html/wp-content/themes
-      - ./wp-content/mu-plugins:/var/www/html/wp-content/mu-plugins
+      - ./wp-content/plugins:/var/www/html/wp-content/plugins
+      - ./wp-content/uploads:/var/www/html/wp-content/uploads
   adminer:
     image: adminer:latest
     restart: always
