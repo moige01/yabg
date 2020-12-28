@@ -44,17 +44,17 @@ You can run the project with with the standard command `docker-compose up -d`.
 
 ## Notes for those that don't (or can't) use Docker
 
-If you don't have any WordPress installed, you can use `# ./<%- name %>.sh installwpcore`. This will install the last WordPress version without the `wp-content` folder (ideally for the previous step) into a new folder called `wp` (this is actually ignored in git).
+For this way, you will need [PHP](https://www.php.net/) and [WP-CLI](https://wp-cli.org/) installed in your system and register in your `$PATH`.
 
-Now, yo need to copy and paste (no rename since this file is tracked in git) the file `local-config-sample.php` to `local-config.php`. Then, please, replace salts constants and fill DB constants with your MySQL/MariaDB service host, port, user and password. Yoy may change `$table_prefix` if apply.
+You need to copy and paste (no rename since this file is tracked in git) the file `wp-config-sample.php` to `wp-config.php`. Then, please, replace salts constants and fill DB constants with your MySQL/MariaDB service host, port, user and password. Yoy may change `$table_prefix` if apply.
 
-Ensure to have enable `mysqli` on your `php.ini` file.
+Then, you can use `# ./<%- name %>.sh installwpcore`. This will download and install the last WordPress version without the `wp-content` folder (ideally for the previous step) into a new folder called `wp` (this is actually ignored in git).
+
+Ensure to have enable `mysqli` extension on your `php.ini` file.
 
 Next, you can use the bulit-in PHP webserver using `# ./<%- name %>.sh server`. This will launch a webserver running the project in `localhost:8080`.
 
 Please, take in mind that using this way the Database service (MySQL or MariaDB) **runs by your own**.
-
-For this way, you will need [PHP](https://www.php.net/) and [WP-CLI](https://wp-cli.org/) installed in your system and register in your `$PATH`.
 
 ### NOTES
 

@@ -6,7 +6,7 @@ services:
     depends_on:
       - db
       - proxy
-    restart: always
+    restart: unless-stopped
     environment:
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_USER: "${DB_USER}"
@@ -15,12 +15,10 @@ services:
       WORDPRESS_DEBUG: 1
       VIRTUAL_HOST: "<%- name _%>.local"
     volumes:
-      - ./wp-content/themes:/var/www/html/wp-content/themes
-      - ./wp-content/plugins:/var/www/html/wp-content/plugins
-      - ./wp-content/uploads:/var/www/html/wp-content/uploads
+      - ./wp-content:/var/www/html/wp-content
   adminer:
     image: adminer:latest
-    restart: always
+    restart: unless-stopped
     depends_on:
       - db
       - proxy
@@ -30,14 +28,14 @@ services:
     image: mailhog/mailhog
     depends_on:
       - proxy
-    restart: always
+    restart: unless-stopped
     environment:
       VIRTUAL_HOST: "mail.<%- name _%>.local"
       VIRTUAL_PORT: "8025"
   db:
     image: mysql:latest
     command: --default-authentication-plugin=mysql_native_password
-    restart: always
+    restart: unless-stopped
     environment:
       MYSQL_DATABASE: "${DB_NAME}"
       MYSQL_USER: "${DB_USER}"
@@ -47,11 +45,13 @@ services:
       - db:/var/lib/mysql
   proxy:
     image: jwilder/nginx-proxy:latest
-    restart: always
+    restart: unless-stopped
     ports:
       - 80:80
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./conf.d/extended_timeout.conf:/etc/nginx/conf.d/extended_timeout.conf:ro
+      - ./conf.d/max_body_size.conf:/etc/nginx/conf.d/max_body_size.conf:ro
 
 volumes:
   db:

@@ -17,18 +17,15 @@ function createWPApplication(name, dir) {
   helpers.write(pathJoin(dir, `${name}.sh`), control.render(), helpers.MODE_0744);
   helpers.write(pathJoin(dir, `${name}.ps1`), controlps1.render(), helpers.MODE_0744);
 
-  helpers.mkdir(dir, pathJoin('wp-content', 'themes'));
-  helpers.mkdir(dir, pathJoin('wp-content', 'plugins'));
-
-  const wpContent = pathJoin(dir, 'wp-content');
-
-  helpers.write(pathJoin(wpContent, 'index.php'), "<?php\n// Silence is golden.");
+  helpers.mkdir(dir, pathJoin('conf.d'));
 
   helpers.copyTemplate(pathJoin('wp', '.env.example'), pathJoin(dir, '.env.example'));
   helpers.copyTemplate(pathJoin('wp', 'gitignore'), pathJoin(dir, '.gitignore'));
-  helpers.copyTemplate(pathJoin('wp', 'index.php'), pathJoin(dir, 'index.php'));
-  helpers.copyTemplate(pathJoin('wp', 'local-config-sample.php'), pathJoin(dir, 'local-config-sample.php'));
-  helpers.copyTemplate(pathJoin('wp', 'wp-config.php'), pathJoin(dir, 'wp-config.php'));
+  helpers.copyTemplate(pathJoin('wp', 'wp-config-sample.php'), pathJoin(dir, 'wp-config-sample.php'));
+  helpers.copyTemplate(pathJoin('wp', 'conf.d', 'extended_timeout.conf'), pathJoin(dir, 'conf.d', 'extended_timeout.conf'));
+  helpers.copyTemplate(pathJoin('wp', 'conf.d', 'max_body_size.conf'), pathJoin(dir, 'conf.d', 'max_body_size.conf'));
+  helpers.copyTemplate(pathJoin('wp', 'wp-cli.yml'), pathJoin(dir, 'wp-cli.yml'));
+  helpers.copyTemplate(pathJoin('wp', 'gitlab-ci.yml'), pathJoin(dir, '.gitlab-ci.yml'));
 }
 
 module.exports = createWPApplication;

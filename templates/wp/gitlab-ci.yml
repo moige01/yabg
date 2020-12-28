@@ -1,0 +1,127 @@
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
+  LOCAL_THEME_PATH: "wp-content/themes/$THEME"
+
+stages:
+  - .pre
+  - build
+  - deploy
+
+install:
+  image: composer:latest
+  interruptible: true
+  stage: .pre
+
+  cache:
+    policy: push
+    key: $CI_PROJECT_NAMESPACE-$CI_PROJECT_DIR
+    paths:
+      - $CI_PROJECT_DIR/$LOCAL_THEME_PATH/vendor/
+
+  only:
+    refs:
+      - develop
+      - master
+      - /^release/.*$/
+    changes:
+      - "**/wp-content/themes/**/composer.json"
+      - "**/wp-content/themes/**/composer.lock"
+
+  script:
+    - cd $CI_PROJECT_DIR/$LOCAL_THEME_PATH
+    - composer install --no-dev --no-progress
+
+build:
+  image: node:latest
+  stage: build
+
+  cache:
+    key: $CI_PROJECT_NAMESPACE-$CI_PROJECT_DIR
+    paths:
+      - $CI_PROJECT_DIR/$LOCAL_THEME_PATH/.yarn/
+      - $CI_PROJECT_DIR/$LOCAL_THEME_PATH/dist/
+    policy: pull-push
+
+  only:
+    refs:
+      - develop
+      - master
+      - /^release/.*$/
+    changes:
+      - "**/wp-content/themes/**/resources/assets/**/*"
+
+  script:
+    - cd $CI_PROJECT_DIR/$LOCAL_THEME_PATH
+    - yarn
+    - yarn build:production
+
+deploy:development:
+  extends: .deploy
+  variables:
+    HOST: $DEV_HOST
+  only:
+    - develop
+
+deploy:release:
+  extends: .deploy
+  variables:
+    HOST: $STG_HOST
+  only:
+    - /^release/.*$/
+
+deploy:production:
+  extends: .deploy
+  when: manual
+  variables:
+    HOST: $PROD_HOST
+  only:
+    - master
+
+.deploy:
+  stage: deploy
+
+  cache:
+    key: $CI_PROJECT_NAMESPACE-$CI_PROJECT_DIR
+    paths:
+      - $CI_PROJECT_DIR/$LOCAL_THEME_PATH/dist/
+      - $CI_PROJECT_DIR/$LOCAL_THEME_PATH/vendor/
+    policy: pull
+
+  script:
+    - cd $CI_PROJECT_DIR
+
+    # Search for the ssh-agent
+    - "which ssh-agent || ( apt-get update -y && apt-get install openssh-client git -y )"
+
+    # Start the ssh-agent
+    - eval $(ssh-agent -s)
+
+    # Add the SSH Key stored in the SSH_PRIVATE_KEY variable to the agent store
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+
+    # Create the .ssh folder
+    - mkdir -p ~/.ssh
+
+    # Prevent ssh public key confirmation
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+
+    # add remote branch
+    - git remote add deploy $HOST
+
+    # set your account's identity.
+    - git config user.email "$GITLAB_USER_EMAIL"
+    - git config user.name "smg-deployer"
+
+    # Create a new orphaned branch, which will be temporary
+    - git checkout --orphan deploy
+
+    # Set build ignored
+    - if [ -d $CI_PROJECT_DIR/$LOCAL_THEME_PATH/dist/ ]; then git add -f $CI_PROJECT_DIR/$LOCAL_THEME_PATH/dist/; fi
+    - if [ -d $CI_PROJECT_DIR/$LOCAL_THEME_PATH/vendor/ ]; then git add -f $CI_PROJECT_DIR/$LOCAL_THEME_PATH/vendor/; fi
+
+    # Commit build changes in temp branch
+    - git commit -m "CI_JOB_TOKEN"
+
+    # push remote
+    - git push -vf deploy HEAD:master

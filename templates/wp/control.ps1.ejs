@@ -34,7 +34,12 @@ function Install-WP-Core {
   $full_path = (Join-Path -Path $PSScriptRoot -ChildPath 'wp')
 
   wp core download --skip-content --locale=en_US --path="${full_path}"
-  Write-Host 'WordPress was sucessfully downloaded'
+
+  Write-Host "Installing WordPress with WP-CLI"
+
+  wp core install --admin_user=admin --admin_password=admin --title="<%- name %>" --admin_email=admin@admin.com
+
+  Write-Host 'WordPress Core has been downloaded and installed'
 }
 
 function Add-Records {

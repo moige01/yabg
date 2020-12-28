@@ -54,7 +54,11 @@ _install_wp_nocontent() {
 
   wp core download --skip-content --locale=en_US --path="${full_path}"
 
-  echo "WordPress Core has been installed in ${full_path}."
+  echo "Installing WordPress with WP-CLI"
+
+  wp core install --admin_user=admin --admin_password=admin --title="<%- name %>" --admin_email=admin@admin.com
+
+  echo "WordPress Core has been downloaded and installed in ${full_path}."
 }
 
 _new_record() {
