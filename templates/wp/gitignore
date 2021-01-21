@@ -13,7 +13,7 @@ wp-content/upgrade/
 
 # local alternative stuff
 wp/
-wp-config-sample.php
+wp-config.php
 
 # ignore node dependency directories
 node_modules/

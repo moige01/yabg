@@ -25,7 +25,7 @@ services:
     environment:
       VIRTUAL_HOST: "db.<%- name _%>.local"
   mail:
-    image: mailhog/mailhog
+    image: mailhog/mailhog:latest
     depends_on:
       - proxy
     restart: unless-stopped
@@ -33,7 +33,7 @@ services:
       VIRTUAL_HOST: "mail.<%- name _%>.local"
       VIRTUAL_PORT: "8025"
   db:
-    image: mysql:latest
+    image: mariadb:latest
     command: --default-authentication-plugin=mysql_native_password
     restart: unless-stopped
     environment:

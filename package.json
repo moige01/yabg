@@ -1,6 +1,6 @@
 {
   "name": "yabg",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Yes... Another Boilerplate Generator",
   "keywords": [
     "generator",
@@ -23,9 +23,6 @@
   "bin": {
     "yabg": "./bin/yabg.js"
   },
-  "scripts": {
-    "test": "mocha --reporter spec --bail --check-leaks test/"
-  },
   "dependencies": {
     "chalk": "^2.4.2",
     "clear": "^0.1.0",
@@ -41,8 +38,7 @@
     "tmp": "^0.2.1"
   },
   "devDependencies": {
-    "eslint": "^6.5.1",
-    "mocha": "^7.1.2"
+    "eslint": "^6.5.1"
   },
   "engines": {
     "node": ">= 9"
